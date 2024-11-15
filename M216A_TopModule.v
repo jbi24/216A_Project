@@ -78,21 +78,6 @@ wire rst_i;
 //Add your code below 
 //Make sure to Register the outputs using the Register modules given above
 
-// Parameters to store max height information
-localparam HEIGHT1 = 8; 
-localparam HEIGHT2 = 8;
-localparam HEIGHT3 = 9;
-localparam HEIGHT4 = 7;
-localparam HEIGHT5 = 10;
-localparam HEIGHT6 = 6;
-localparam HEIGHT7 = 11;
-localparam HEIGHT8 = 5;
-localparam HEIGHT9 = 12;
-localparam HEIGHT10 = 4;
-localparam HEIGHT11 = 16;
-localparam HEIGHT12 = 16;
-localparam HEIGHT13 = 16;
-
 // Parameters to store Y index information given strip ID
 localparam INDEX1 = 0;
 localparam INDEX2 = 8;
@@ -108,13 +93,18 @@ localparam INDEX11 = 80;
 localparam INDEX12 = 96;
 localparam INDEX13 = 112;
 
+// Common registers
+reg [7:0] grid [13:0];
+reg [3:0] strike_counter;
+
 // 1) Input flops:
 
-reg [4:0] width_d1;
-reg [4:0] height_d1;
+wire [4:0] width_d1;
+wire [4:0] height_d1;
 
-P1_Reg_5_bit ff_width(.DataIn(width_i), DataOut(width_d1), rst(rst_i), clk(clk_i));
-P1_Reg_5_bit ff_height(.DataIn(height_i), DataOut(height_d1), rst(rst_i), clk(clk_i));
+P1_Reg_5_bit ff_width(.DataIn(width_i), .DataOut(width_d1), .rst(rst_i), .clk(clk_i));
+P1_Reg_5_bit ff_height(.DataIn(height_i), .DataOut(height_d1), .rst(rst_i), .clk(clk_i));
+
 
 // 2) possible candidate strips -> output: strip_A, strip_B, strip_C (strip IDs)
 
@@ -132,7 +122,7 @@ reg [3:0] strip_ID_C;
 reg [1:0] numCand;
 
 always @(clk_i) begin
-    case(width_d1)
+    case(height_d1)
         5'b00100 :	begin //program height = 4
                 strip_ID_A = 4'b1010; //Strip ID = 10 
                 strip_ID_B = 4'b1000; //Strip ID = 8
@@ -187,13 +177,18 @@ always @(clk_i) begin
                 strip_ID_C = 4'b0000;
                 numCand = 2'b01;
                 end
-        default : 	begin //program height = 13, 14, 15, 16
+        5'd13, 5'd14, 5'd15, 5'd16: begin //program height = 13, 14, 15, 16
                 strip_ID_A = 4'b1101; //Strip ID = 13
                 strip_ID_B = 4'b1100; //Strip ID = 12
                 strip_ID_C = 4'b1011; //Strip ID = 11
                 numCand = 2'b11;
                 end
-        // FIXME: Default should be an incorrect case because this is comb logic
+        default: begin
+                strip_ID_A = 4'b0000; 
+                strip_ID_B = 4'b0000; 
+                strip_ID_C = 4'b1000; 
+                numCand = 2'b00;
+                end
     endcase
 end
 
@@ -208,7 +203,6 @@ always @(posedge clk_i) begin
         id_c_d2     <= 4'b0;
     end else begin
         width_d2    <= width_d1;
-        height_d2   <= height_d1;
         num_cand_d2 <= numCand;
         
         id_a_d2     <= strip_ID_A;
@@ -230,13 +224,13 @@ reg [7:0] occupied_B_d3;
 reg [7:0] occupied_C_d3;
 
 // Wires
-reg [7:0] occupied_width_A;
-reg [7:0] occupied_width_B;
-reg [7:0] occupied_width_C;
+wire [7:0] occupied_width_A;
+wire [7:0] occupied_width_B;
+wire [7:0] occupied_width_C;
 
-
-//TODO: reg
-//TODO: Julia - Read reg
+assign occupied_width_A = grid[id_a_d2];
+assign occupied_width_B = grid[id_b_d2];
+assign occupied_width_C = grid[id_c_d2];
 
 always @(posedge clk_i) begin
     if (rst_i) begin
@@ -263,7 +257,7 @@ always @(posedge clk_i) begin
     end
 end
 
-// 3) Select the strip
+// 4) Select the strip
 
 // Stage flops
 reg [4:0] width_d4;
@@ -276,8 +270,10 @@ reg [7:0] occupied_width;
 
 always @(*) begin
     case (num_cand_d3)
-        2'b01:
+        2'b01: begin
             selected_strip = id_a_d3;
+            occupied_width = occupied_A_d3;
+        end
         2'b10: begin
             if (occupied_A_d3 > occupied_B_d3) begin
                 selected_strip = id_b_d3;
@@ -309,7 +305,7 @@ always @(*) begin
                     occupied_width = occupied_B_d3;
                 end
             end
-            else (occupied_A_d3 == occupied_B_d3) begin
+            else begin // (occupied_A_d3 == occupied_B_d3)
                 if (occupied_A_d3 > occupied_C_d3) begin
                     selected_strip = id_c_d3; 
                     occupied_width = occupied_C_d3;
@@ -319,6 +315,10 @@ always @(*) begin
                     occupied_width = occupied_A_d3;
                 end
             end
+        end
+        default: begin
+            selected_strip = 4'd0;
+            occupied_width = 8'd0;
         end
     endcase
 end
@@ -336,53 +336,158 @@ always @(posedge clk_i) begin
     end   
 end
 
-// 4) Adder
+// 5) Adder
 
 // Stage flops
 reg [7:0] utilization_d5;
 reg [7:0] y_d5;
+reg [7:0] x_d5;
+reg [3:0] id_selected_d5;
 
 // Wires
+wire [7:0] sum;
+reg [7:0] y_coord;
 
 // Adder goes here (something like width_d4 + utilization_d4)
+assign sum = width_d4 + utilization_d4;
 
 // Comb logic to match id_selected_d4 to the correct x coordinate (use localparams INDEX# at the top)
+always @(*) begin
+    case(id_selected_d4)
+        4'd1: y_coord = INDEX1;
+        4'd2: y_coord = INDEX2;
+        4'd3: y_coord = INDEX3;
+        4'd4: y_coord = INDEX4;
+        4'd5: y_coord = INDEX5;
+        4'd6: y_coord = INDEX6;
+        4'd7: y_coord = INDEX7;
+        4'd8: y_coord = INDEX8; 
+        4'd9: y_coord = INDEX9;
+        4'd10: y_coord = INDEX10;
+        4'd11: y_coord = INDEX11;
+        4'd12: y_coord = INDEX12;
+        4'd13: y_coord = INDEX13;
+        default: y_coord = 8'b0;
+    endcase
+end
 
 always @(posedge clk_i) begin
     if (rst_i) begin
         // Reset flops
         utilization_d5  <= 8'b0;
+        x_d5            <= 8'b0;
         y_d5            <= 8'b0;
-    end else begin
-        utilization_d4  <= // TODO: Result from adder;
-        y_d5            <= // TODO: Requires a case statement;
+        id_selected_d5  <= 4'b0;
+    end 
+    else begin
+        utilization_d5  <= sum;
+        x_d5            <= utilization_d4;
+        y_d5            <= y_coord;
+        id_selected_d5  <= id_selected_d4;
     end   
 end
 
-// 5) Write back and outputs
+// 6) Write back and outputs
+
+reg [2:0] strike_buffer;
 
 // Stage flops
-reg [3:0] strike_d6;
+reg strike_d6;
 reg [7:0] x_d6;
 reg [7:0] y_d6;
 
-// Strike condition logic goes here
+// Wires
+reg strike;
+reg writeback;
+reg [7:0] x_qualified;
+reg [7:0] y_qualified;
+
+// Strike condition logic
+always @(*) begin
+    if (utilization_d5 <= 128) begin
+        x_qualified = x_d5;
+        y_qualified = y_d5;
+        strike      = 1'b0;
+        writeback   = 1'b1;
+    end
+    else begin
+        x_qualified = 8'd128;
+        y_qualified = 8'd128;
+        strike      = !strike_buffer ? 1'b1 : 1'b0; // One cycle
+        writeback   = 1'b0;
+    end
+end
+
+always @(posedge clk_i) begin
+    if (rst_i) begin
+        strike_buffer <= 4'd0;
+    end
+    else begin
+        strike_buffer <= {strike_buffer[1:0], strike}; // Prevents multiple strikes from occuring for the same input vector by storing the strike history for the past 3 cycles.
+    end
+end
+
+integer i;
+always @(posedge clk_i) begin
+    if (rst_i) begin   
+        strike_counter <= 4'd0;
+        for (i = 0; i < 14; i = i + 1) begin
+            grid[i] = 8'd0;
+        end      
+    end
+    else begin
+        if (strike) begin
+            strike_counter = strike_counter + 1'b1;
+        end
+
+        if (writeback) begin
+            grid[id_selected_d5] = utilization_d5;
+        end
+    end
+end
 
 always @(posedge clk_i) begin
     if (rst_i) begin
         // Reset flops
-        strike_d6   <= 4'b0;
-        x_d6        <= 8'b0;
-        y_d6        <= 8'b0;
+        strike_d6   <= 1'b0;
+        x_d6        <= 8'd0;
+        y_d6        <= 8'd0;
     end else begin
-        strike_d6   <= ; 
-        x_d6        <= ; // TODO: x and y are dependent on strike condition
-        y_d6        <= ;
+        strike_d6   <= strike; 
+        x_d6        <= x_qualified; 
+        y_d6        <= y_qualified;
     end   
 end
 
-// 6) Delay stage?
+// 7) Output stage
 
-// 7) Output stage?
+// Stage flops
+reg [7:0] x_d7;
+reg [7:0] y_d7;
+reg [3:0] strikes_d7;
+
+// Wires
+wire [3:0] strike_count;
+
+assign strike_count = strike_counter;
+
+always @(posedge clk_i) begin
+    if (rst_i) begin
+        // Reset flops
+        strikes_d7  <= 4'd0;
+        x_d7        <= 8'd0;
+        y_d7        <= 8'd0;
+    end else begin
+        strikes_d7  <= strike_count; 
+        x_d7        <= x_d6; 
+        y_d7        <= y_d6;
+    end   
+end
+
+// 8) Register outputs
+
+P1_Reg_8_bit ff_x(.DataIn(x_d7), .DataOut(index_x_o), .rst(rst_i), .clk(clk_i));
+P1_Reg_8_bit ff_y(.DataIn(y_d7), .DataOut(index_y_o), .rst(rst_i), .clk(clk_i));
+P1_Reg_4_bit ff_strike(.DataIn(strikes_d7), .DataOut(strike_o), .rst(rst_i), .clk(clk_i));
 
 endmodule
