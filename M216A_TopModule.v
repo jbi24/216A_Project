@@ -121,7 +121,7 @@ reg [3:0] strip_ID_B;
 reg [3:0] strip_ID_C;
 reg [1:0] numCand;
 
-always @(clk_i) begin
+always @(*) begin
     case(height_d1)
         5'b00100 :	begin //program height = 4
                 strip_ID_A = 4'b1010; //Strip ID = 10 
