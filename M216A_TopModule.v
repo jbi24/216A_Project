@@ -186,7 +186,7 @@ always @(*) begin
         default: begin
                 strip_ID_A = 4'b0000; 
                 strip_ID_B = 4'b0000; 
-                strip_ID_C = 4'b1000; 
+                strip_ID_C = 4'b0000; 
                 numCand = 2'b00;
                 end
     endcase
