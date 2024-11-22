@@ -430,18 +430,18 @@ end
 integer i;
 always @(posedge clk_i) begin
     if (rst_i) begin   
-        strike_counter <= 4'd0;
+        strike_counter <= 4'd0; 
         for (i = 0; i < 14; i = i + 1) begin
-            grid[i] = 8'd0;
+            grid[i] <= 8'd0;
         end      
     end
     else begin
         if (strike) begin
-            strike_counter = strike_counter + 1'b1;
+            strike_counter <= strike_counter + 1'b1;
         end
 
         if (writeback) begin
-            grid[id_selected_d5] = utilization_d5;
+            grid[id_selected_d5] <= utilization_d5;
         end
     end
 end
