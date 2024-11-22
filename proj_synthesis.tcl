@@ -11,7 +11,7 @@ set synthetic_library "dw_foundation.sldb"
 
 # Define work path (note: The work path must exist, so you need to create a folder WORK first)
 define_design_lib WORK -path ./WORK
-set alib_library_analysis_path "./alib-52/"
+set alib_library_analysis_path “./alib-52/”
 
 # Read the gate-level verilog files
 analyze -format verilog {M216A_TopModule.v}
@@ -55,14 +55,14 @@ compile -map high
 compile -boundary_optimization
 compile -only_hold_time
 
-report_timing -path full -delay min -max_paths 25 -nworst 2 > Design.holdtiming
-report_timing -path full -delay max -max_paths 25 -nworst 2 > Design.setuptiming
-report_area -hierarchy > Design.area
-report_power -hier -hier_level 2 > Design.power
-report_resources > Design.resources
-report_constraint -verbose > Design.constraint
-check_design > Design.check_design
-check_timing > Design.check_timing
+report_timing -path full -delay min -max_paths 10 -nworst 2 > reports/Design.holdtiming
+report_timing -path full -delay max -max_paths 10 -nworst 2 > reports/Design.setuptiming
+report_area -hierarchy > reports/Design.area
+report_power -hier -hier_level 2 > reports/Design.power
+report_resources > reports/Design.resources
+report_constraint -verbose > reports/Design.constraint
+check_design > reports/Design.check_design
+check_timing > reports/Design.check_timing
 
 write -hierarchy -format verilog -output $DESIGN_NAME.vg
 write_sdf -version 1.0 -context verilog $DESIGN_NAME.sdf
