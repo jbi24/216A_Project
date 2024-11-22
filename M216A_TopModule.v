@@ -122,72 +122,72 @@ reg [3:0] strip_ID_C;
 reg [1:0] numCand;
 
 always @(*) begin
-    case(height_d1)
-        5'b00100 :	begin //program height = 4
-                strip_ID_A = 4'b1010; //Strip ID = 10 
-                strip_ID_B = 4'b1000; //Strip ID = 8
-                strip_ID_C = 4'b0000;
+    case(height_d1) 
+        5'd4 :	begin //program height = 4
+                strip_ID_A = 4'd10; //Strip ID = 10 
+                strip_ID_B = 4'd8; //Strip ID = 8
+                strip_ID_C = 4'b0;
+                numCand = 2'd2;
+                end
+        5'd5 :	begin //program height = 5
+                strip_ID_A = 4'd8; //Strip ID = 8
+                strip_ID_B = 4'd6; //Strip ID = 6
+                strip_ID_C = 4'b0;
+                numCand = 2'd2;
+                end
+        5'd6 :	begin //program height = 6
+                strip_ID_A = 4'd6; //Strip ID = 6
+                strip_ID_B = 4'd4; //Strip ID = 4
+                strip_ID_C = 4'b0;
+                numCand = 2'd2;
+                end
+        5'd7 :	begin //program height = 7
+                strip_ID_A = 4'd4; //Strip ID = 4
+                strip_ID_B = 4'd1; //Strip ID = 1
+                strip_ID_C = 4'd2; //Strip ID = 2
+                numCand = 2'd3;
+                end
+        5'd8 :	begin //program height = 8
+                strip_ID_A = 4'd1; //Strip ID = 1
+                strip_ID_B = 4'd2; //Strip ID = 2
+                strip_ID_C = 4'd3; //Strip ID = 3
+                numCand = 2'd3;
+                end
+        5'd9 :	begin //program height = 9
+                strip_ID_A = 4'd3; //Strip ID = 3
+                strip_ID_B = 4'd5; //Strip ID = 5
+                strip_ID_C = 4'b0;
+                numCand = 2'd2;
+                end
+        5'd10 :	begin //program height = 10
+                strip_ID_A = 4'd5; //Strip ID = 5
+                strip_ID_B = 4'd7; //Strip ID = 7
+                strip_ID_C = 4'b0;
                 numCand = 2'b10;
                 end
-        5'b00101 :	begin //program height = 5
-                strip_ID_A = 4'b1000; //Strip ID = 8
-                strip_ID_B = 4'b0110; //Strip ID = 6
-                strip_ID_C = 4'b0000;
-                numCand = 2'b10;
+        5'd11 :	begin //program height = 11
+                strip_ID_A = 4'd7; //Strip ID = 7
+                strip_ID_B = 4'd9; //Strip ID = 9
+                strip_ID_C = 4'b0;
+                numCand = 2'd2;
                 end
-        5'b00110 :	begin //program height = 6
-                strip_ID_A = 4'b0110; //Strip ID = 6
-                strip_ID_B = 4'b0100; //Strip ID = 4
-                strip_ID_C = 4'b0000;
-                numCand = 2'b10;
-                end
-        5'b00111 :	begin //program height = 7
-                strip_ID_A = 4'b0100; //Strip ID = 4
-                strip_ID_B = 4'b0001; //Strip ID = 1
-                strip_ID_C = 4'b0010; //Strip ID = 2
-                numCand = 2'b11;
-                end
-        5'b01000 :	begin //program height = 8
-                strip_ID_A = 4'b0001; //Strip ID = 1
-                strip_ID_B = 4'b0010; //Strip ID = 2
-                strip_ID_C = 4'b0011; //Strip ID = 3
-                numCand = 2'b11;
-                end
-        5'b01001 :	begin //program height = 9
-                strip_ID_A = 4'b0011; //Strip ID = 3
-                strip_ID_B = 4'b0101; //Strip ID = 5
-                strip_ID_C = 4'b0000;
-                numCand = 2'b10;
-                end
-        5'b01010 :	begin //program height = 10
-                strip_ID_A = 4'b0101; //Strip ID = 5
-                strip_ID_B = 4'b0111; //Strip ID = 7
-                strip_ID_C = 4'b0000;
-                numCand = 2'b10;
-                end
-        5'b01011 :	begin //program height = 11
-                strip_ID_A = 4'b0111; //Strip ID = 7
-                strip_ID_B = 4'b1001; //Strip ID = 9
-                strip_ID_C = 4'b0000;
-                numCand = 2'b10;
-                end
-        5'b01100 :	begin //program height = 12
-                strip_ID_A = 4'b1001; //Strip ID = 9
-                strip_ID_B = 4'b0000;
-                strip_ID_C = 4'b0000;
-                numCand = 2'b01;
+        5'd12 :	begin //program height = 12
+                strip_ID_A = 4'd9; //Strip ID = 9
+                strip_ID_B = 4'b0;
+                strip_ID_C = 4'b0;
+                numCand = 2'd1;
                 end
         5'd13, 5'd14, 5'd15, 5'd16: begin //program height = 13, 14, 15, 16
-                strip_ID_A = 4'b1101; //Strip ID = 13
-                strip_ID_B = 4'b1100; //Strip ID = 12
-                strip_ID_C = 4'b1011; //Strip ID = 11
-                numCand = 2'b11;
+                strip_ID_A = 4'd13; //Strip ID = 13
+                strip_ID_B = 4'd12; //Strip ID = 12
+                strip_ID_C = 4'd11; //Strip ID = 11
+                numCand = 2'd3;
                 end
         default: begin
-                strip_ID_A = 4'b0000; 
-                strip_ID_B = 4'b0000; 
-                strip_ID_C = 4'b0000; 
-                numCand = 2'b00;
+                strip_ID_A = 4'b0; 
+                strip_ID_B = 4'b0; 
+                strip_ID_C = 4'b0; 
+                numCand = 2'b0;
                 end
     endcase
 end
@@ -269,12 +269,12 @@ reg [3:0] selected_strip;
 reg [7:0] occupied_width;
 
 always @(*) begin
-    case (num_cand_d3)
-        2'b01: begin
+    case (num_cand_d3) 
+        2'd1: begin 
             selected_strip = id_a_d3;
             occupied_width = occupied_A_d3;
         end
-        2'b10: begin
+        2'd2: begin
             if (occupied_A_d3 > occupied_B_d3) begin
                 selected_strip = id_b_d3;
                 occupied_width = occupied_B_d3;
@@ -284,7 +284,7 @@ always @(*) begin
                 occupied_width = occupied_A_d3;
             end
         end
-        2'b11: begin
+        2'd3: begin
             if (occupied_A_d3 < occupied_B_d3) begin
                 if (occupied_A_d3 > occupied_C_d3) begin 
                     selected_strip = id_c_d3;
@@ -413,7 +413,7 @@ always @(*) begin
     else begin
         x_qualified = 8'd128;
         y_qualified = 8'd128;
-        strike      = !strike_buffer ? 1'b1 : 1'b0; // One cycle
+        strike      = !strike_buffer ? 1'b1 : 1'b0; 
         writeback   = 1'b0;
     end
 end
@@ -432,16 +432,16 @@ always @(posedge clk_i) begin
     if (rst_i) begin   
         strike_counter <= 4'd0;
         for (i = 0; i < 14; i = i + 1) begin
-            grid[i] = 8'd0;
+            grid[i] <= 8'd0;
         end      
     end
     else begin
         if (strike) begin
-            strike_counter = strike_counter + 1'b1;
+            strike_counter <= strike_counter + 1'b1;
         end
 
         if (writeback) begin
-            grid[id_selected_d5] = utilization_d5;
+            grid[id_selected_d5] <= utilization_d5;
         end
     end
 end
@@ -452,7 +452,8 @@ always @(posedge clk_i) begin
         strike_d6   <= 1'b0;
         x_d6        <= 8'd0;
         y_d6        <= 8'd0;
-    end else begin
+    end 
+    else begin
         strike_d6   <= strike; 
         x_d6        <= x_qualified; 
         y_d6        <= y_qualified;
@@ -477,7 +478,8 @@ always @(posedge clk_i) begin
         strikes_d7  <= 4'd0;
         x_d7        <= 8'd0;
         y_d7        <= 8'd0;
-    end else begin
+    end 
+    else begin
         strikes_d7  <= strike_count; 
         x_d7        <= x_d6; 
         y_d7        <= y_d6;
