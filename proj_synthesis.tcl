@@ -26,7 +26,7 @@ set_operating_conditions -min ff1p16vn40c -max ss0p95v125c
 
 
 # Describe the clock waveform & setup operating conditions
-set Tclk 8.0
+set Tclk 0.9
 set TCU  0.1
 set IN_DEL 0.6
 set IN_DEL_MIN 0.3
@@ -55,14 +55,14 @@ compile -map high
 compile -boundary_optimization
 compile -only_hold_time
 
-report_timing -path full -delay min -max_paths 25 -nworst 2 > Design.holdtiming
-report_timing -path full -delay max -max_paths 25 -nworst 2 > Design.setuptiming
-report_area -hierarchy > Design.area
-report_power -hier -hier_level 2 > Design.power
-report_resources > Design.resources
-report_constraint -verbose > Design.constraint
-check_design > Design.check_design
-check_timing > Design.check_timing
+report_timing -path full -delay min -max_paths 25 -nworst 2 > reports/Group_28.TimingHold
+report_timing -path full -delay max -max_paths 25 -nworst 2 > reports/Group_28.TimingSetup
+report_area -hierarchy > reports/Group_28.Area
+report_power -hier -hier_level 2 > reports/Group_28.Power
+# report_resources > Design.resources
+#report_constraint -verbose > Design.constraint
+#check_design > Design.check_design
+#check_timing > Design.check_timing
 
 write -hierarchy -format verilog -output $DESIGN_NAME.vg
 write_sdf -version 1.0 -context verilog $DESIGN_NAME.sdf
