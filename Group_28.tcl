@@ -26,7 +26,7 @@ set_operating_conditions -min ff1p16vn40c -max ss0p95v125c
 
 
 # Describe the clock waveform & setup operating conditions
-set Tclk 0.476190476
+set Tclk 0.29
 #set TCU  0.1
 #set IN_DEL 0.6
 #set IN_DEL_MIN 0.3
